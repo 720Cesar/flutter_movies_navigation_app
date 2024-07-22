@@ -1,5 +1,7 @@
 import 'package:cinemapedia/config/constants/environment.dart';
+import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -10,11 +12,50 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Scaffold(
-        body: Center(
-          child: Text( Environment.theMovieDbKey ),
-        ),
-      ),
+      body: _HomeView(),
     );
+  }
+}
+
+// El statefulWidget pasa a ser ConsumerStatefulWidget
+class _HomeView extends ConsumerStatefulWidget {
+  const _HomeView();
+
+  @override
+  //Se cambia a una instancia de la clase _HomeViewState
+  _HomeViewState createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<_HomeView> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    //Se pone el provider en tipo lectura con loadNextPage
+    //Se manda a llamar la petición, pero no la muestra 
+    ref.read( nowPlayingMoviesProvider.notifier ).loadNextPage();
+    
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    //Watch porque debe estar pendiente del provider para el listado de las películas
+    //ref.watch permite obtener los valores del provider
+    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
+
+    return ListView.builder(
+      itemCount: nowPlayingMovies.length,
+      itemBuilder: (context, index){
+        
+        final movie = nowPlayingMovies[index];
+        return ListTile(
+          title: Text(movie.title),
+        );
+      }
+    );
+
+    return Placeholder();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cinemapedia/config/router/app_router.dart';
 import 'package:cinemapedia/config/theme/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
 Future<void> main() async {
@@ -10,7 +11,10 @@ Future<void> main() async {
   //Uso de las variables de entorno
   await dotenv.load(fileName: ".env");
 
-  runApp(const MainApp());
+  runApp(
+    //Contiene todas las referencias a los providers de Riverpod
+    const ProviderScope(child: MainApp())
+  );
 }
 
 class MainApp extends StatelessWidget {

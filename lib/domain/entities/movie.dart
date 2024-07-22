@@ -1,4 +1,6 @@
 
+//Entidad propia, (No es igual a TheMovieDB)
+
 class Movie {
   final bool adult;
   final String backdropPath;
