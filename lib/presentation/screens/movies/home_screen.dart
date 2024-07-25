@@ -11,8 +11,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: _HomeView(),
+      bottomNavigationBar: CustomBottomNavigation(),
     );
   }
 }
@@ -43,22 +44,82 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     //Watch porque debe estar pendiente del provider para el listado de las películas
     //ref.watch permite obtener los valores del provider
-    //final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
-
+    
+    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
     final slideShowMovies = ref.watch( moviesSlideshowProvider );
 
-    return Column(
 
-      children: [
+    //SingleChildScrollView() es un widget que permite hacer Scroll al widget hijo (Column())
+    //Los Slivers tienen que trabajar con el CustomScrollView
+    
+    return CustomScrollView(
+      //El Sliver es un tipo de widget que trabaja unicamente con los ScrollView
+      slivers: [
 
-        const CustomAppbar(),
+        const SliverAppBar(
+          floating: true, //Permite que el appBar aparezca cuando se hace Scroll hacía abajo
+          flexibleSpace: FlexibleSpaceBar(
+            title: CustomAppbar(), //No puede ser constante por la posición
+            titlePadding: EdgeInsets.zero, //Permite que no haya un padding en el título
+            centerTitle: false,
+          ),
+        ),
 
-        MoviesSlideshow(
-          movies: slideShowMovies
-        )
-        
-      ],
+        SliverList(delegate: SliverChildBuilderDelegate(
+          (context, index){
+            return Column(
+              children: [
+            
+                //const CustomAppbar(),
+            
+                MoviesSlideshow(movies: slideShowMovies),
+            
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: "En cines",
+                  subTitle: "Junio",
+                  loadNextPage: (){
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                  }
+                ),
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: "Proximamente",
+                  subTitle: "En este mes",
+                  loadNextPage: (){
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                  }
+                ),
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: "Populares",
+                  //subTitle: "",
+                  loadNextPage: (){
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                  }
+                ),
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: "Mejor calificadas",
+                  subTitle: "Desde siempre",
+                  loadNextPage: (){
+                    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+                  }
+                ),
 
+                const SizedBox(height: 20,),
+                
+              ],
+            
+            );
+          },
+          childCount: 1, //Establece el número de hijos
+        ),
+      ),
+
+      ]
+      
+      
     );
 
   }

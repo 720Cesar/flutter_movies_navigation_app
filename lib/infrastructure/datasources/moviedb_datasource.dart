@@ -4,6 +4,7 @@ import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/infrastructure/mapppers/movie_mapper.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/gestures.dart';
 
 //EN ESTE ARCHIVO SE ENCUENTRA TODA LA LÓGICA PARA REALIZAR PETICIONES HTTP A LA API
 // ES UNA ÚNICA PETICIÓN HTTP
@@ -24,8 +25,11 @@ class MovieDbDatasource extends MoviesDatasource{
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
     
-    //Obtiene las peliculas 
-    final response = await dio.get('/movie/now_playing');
+    //Obtiene las peliculas por página para que las pelis no se repitan
+    final response = await dio.get('/movie/now_playing',
+    queryParameters: {
+      "page" : page,
+    });
 
     //Se recibe la respuesta del JSON en este caso de "now_playing"
     final movieDBResponse = MovieDbResponse.fromJson(response.data);
