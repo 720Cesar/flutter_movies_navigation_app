@@ -33,8 +33,6 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
     super.initState();
 
     scrollController.addListener((){
-      //TODO
-
       if(widget.loadNextPage == null){
         return;
       }
@@ -48,12 +46,9 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
   }
 
   //Siempre que se añade un Listener, se debe crear el dispose inmediatamente
-
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose(
-
     );
   }
 
@@ -78,7 +73,7 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return _Slide(movie: widget.movies[index]);
+                return FadeInRight(child: _Slide(movie: widget.movies[index]));
               }
             )
           )
@@ -91,7 +86,6 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
 
 
 class _Title extends StatelessWidget {
-
 
   final String? title;
   final String? subTitle;
@@ -191,7 +185,7 @@ class _Slide extends StatelessWidget {
             children: [
               Icon(Icons.star_half_outlined, color: Colors.yellow.shade800,),
               const SizedBox(width: 3,),
-              Text("${ movie.voteAverage }", style: textStyles.bodyMedium?.copyWith( color: Colors.yellow.shade800),),
+              Text(HumanFormats.dotNumber(movie.voteAverage), style: textStyles.bodyMedium?.copyWith( color: Colors.yellow.shade800),),
               const SizedBox(width: 10,),
               Text( HumanFormats.number(movie.popularity), style: textStyles.bodySmall,),
             

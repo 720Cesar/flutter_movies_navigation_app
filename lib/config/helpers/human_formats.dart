@@ -18,4 +18,15 @@ class HumanFormats{
 
   }
 
+  static String dotNumber( double number ){
+    final formattedNumber = NumberFormat.compactCurrency(
+      decimalDigits: 1,
+      symbol: "",
+      locale: "en",
+    ).format(number);
+
+    return formattedNumber;
+
+  }
+
 }
