@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 
 //Se cambia a StatefulWidget para que se pueda hacer un scroll infinito
@@ -38,7 +39,6 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
       }
 
       if( (scrollController.position.pixels + 200) >= scrollController.position.maxScrollExtent){
-        print("Load next");
         widget.loadNextPage!();
       } 
 
@@ -155,13 +155,17 @@ class _Slide extends StatelessWidget {
                 loadingBuilder: (context, child, loadingProgress){
                   
                   if(loadingProgress != null){
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(child: const CircularProgressIndicator(strokeWidth: 2,)),
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(child: CircularProgressIndicator(strokeWidth: 2,)),
                     );
                   }
 
-                  return FadeIn(child: child);
+                  //Permite seleccionar una película si se toca la imagen, se hace uso de un "push"
+                  return GestureDetector(
+                    onTap: () => context.push("/movie/${ movie.id }"),
+                    child: FadeIn(child: child),
+                  );
 
                 },
               ),
