@@ -1,9 +1,15 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/providers/actors/actors_by_movie_provider.dart';
 import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
+import 'package:read_more_text/read_more_text.dart';
+import 'package:animated_read_more_text/animated_read_more_text.dart';
+
+
 
 //Pasa de StatefulWidget a ConsumerStatefulWidget
 class MovieScreen extends ConsumerStatefulWidget {
@@ -105,7 +111,20 @@ class _MovieDetails extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Descripción", style: textStyles.titleLarge,),
-                    Text(movie.overview),
+                    
+
+                    AnimatedReadMoreText(
+                    movie.overview,
+                     maxLines: 8,
+                      readMoreText: "+",
+                      readLessText: "-",
+                      buttonTextStyle: TextStyle(
+                        color: colors.primary,
+                        fontWeight: FontWeight.bold,
+                        
+                      ),
+                    ),
+                    
                   ],
                 ),
               ),
@@ -122,21 +141,62 @@ class _MovieDetails extends StatelessWidget {
               ...movie.genreIds.map((gender) => Container(
                 margin: const EdgeInsets.only(right: 10),
                 child: Chip(
-                  label: Text( gender, style: TextStyle(color: Colors.white), ),
+                  label: Text( gender, style: TextStyle(color: colors.inversePrimary), ),
                   shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(20)),
                   backgroundColor: colors.primary,
-
                 ),
               ))
             ],
           ),
         ),
         
-        //TODO: MOSTRAR ACTORES
         //EL ID QUE SE OBTIENE ES UN STRING, POR LO QUE SE DEBE MANDAR EL VALOR COMO TAL
         _ActorsByMovie(movieId: movie.id.toString()),
 
-        const SizedBox( height: 50,),
+        //* CALIFICACIÓN DE LA PELÍCULA
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Calificación general", style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.yellow.shade900
+                  ),),
+                Row(
+                  
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+
+                  SizedBox( 
+                    width: size.width * 0.2,
+                    child: 
+                    Lottie.asset("assets/animations/star_rating_animation.json", animate: true, repeat: true),
+                  ),
+
+                  Text(HumanFormats.number(movie.voteAverage,1), style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: size.width * 0.1,
+                    color: Colors.yellow.shade900
+                  ),),
+
+                  Padding(
+                    padding: EdgeInsetsDirectional.only(start: 50),
+                    child: Text("*Basado en ${movie.voteCount} votos", style: TextStyle(
+                      fontSize: 12,
+                    ),),
+                  ),
+
+                    
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
 
       ],
     );
@@ -164,7 +224,7 @@ class _ActorsByMovie extends ConsumerWidget {
 
     //* DISEÑO DE CAJAS PARA LOS ACTORES
     return SizedBox(
-      height: 300,
+      height: 280,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: actors.length,
@@ -235,7 +295,7 @@ class _CustomSliverAppBar extends StatelessWidget {
 
     return SliverAppBar(
       backgroundColor: Colors.black,
-      expandedHeight: size.height * 0.7,
+      expandedHeight: size.height * 0.24,
       foregroundColor: Colors.white,
       //title: Text(movie.title),
       flexibleSpace: FlexibleSpaceBar(
@@ -252,7 +312,7 @@ class _CustomSliverAppBar extends StatelessWidget {
 
             SizedBox.expand(
               child: Image.network(
-                movie.posterPath,
+                movie.backdropPath,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress){
                   if( loadingProgress != null ) return SizedBox();

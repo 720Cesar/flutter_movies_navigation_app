@@ -8,7 +8,7 @@ class MovieMovideDB {
     final String overview;
     final double popularity;
     final String posterPath;
-    final DateTime releaseDate;
+    final DateTime? releaseDate; //Se agrega "?" porque el dato puede venir nulo
     final String title;
     final bool video;
     final double voteAverage;
@@ -41,7 +41,9 @@ class MovieMovideDB {
         overview: json["overview"] ?? "",
         popularity: json["popularity"]?.toDouble(),
         posterPath: json["poster_path"] ?? "",
-        releaseDate: DateTime.parse(json["release_date"]),
+        releaseDate: json["release_date"]  != null && json["release_date"].toString().isNotEmpty //Si hay datos, los envía. Si no hay datos manda nulo
+          ? DateTime.parse(json["release_date"])
+          : null,
         title: json["title"],
         video: json["video"],
         voteAverage: json["vote_average"]?.toDouble(),
@@ -58,7 +60,9 @@ class MovieMovideDB {
         "overview": overview,
         "popularity": popularity,
         "poster_path": posterPath,
-        "release_date": "${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}",
+        "release_date": (releaseDate != null) 
+          ? "${releaseDate!.year.toString().padLeft(4, '0')}-${releaseDate!.month.toString().padLeft(2, '0')}-${releaseDate!.day.toString().padLeft(2, '0')}"
+          : null,
         "title": title,
         "video": video,
         "vote_average": voteAverage,

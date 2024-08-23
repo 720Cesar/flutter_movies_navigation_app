@@ -4,6 +4,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 
 class MoviesSlideshow extends StatelessWidget {
 
@@ -36,7 +38,12 @@ class MoviesSlideshow extends StatelessWidget {
         itemCount: movies.length,
         itemBuilder: (context, index){
           final movie = movies[index]; //Se obtiene el index de cada pelicula
-          return _Slide( movie: movie );
+          return _Slide( 
+            movie: movie,
+            onMovieSelected: (context, movie){
+
+            }, 
+          );
         } 
 
       ),
@@ -48,8 +55,9 @@ class MoviesSlideshow extends StatelessWidget {
 class _Slide extends StatelessWidget {
 
   final Movie movie;
+  final Function onMovieSelected; 
 
-  const _Slide({required this.movie});
+  const _Slide({required this.movie, required this.onMovieSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -69,23 +77,26 @@ class _Slide extends StatelessWidget {
       padding: const EdgeInsets.only( bottom: 30), //Deja un espacio para los puntos
       child: DecoratedBox(
         decoration: decoration,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20), //Borde redondeado para imagen
-          child: Image.network(
-            movie.backdropPath,
-            fit: BoxFit.cover, //Toma el espacio del contenedor 
-            //Nos ayuda a saber si una imagen ya se construyó o no
-            loadingBuilder: (context, child, loadingProgress){
-              if( loadingProgress != null ){ //Si se está cargando la imagen, entonces...
-                return const DecoratedBox(
-                  decoration: BoxDecoration( color: Colors.black12 )
-                );
+        child: GestureDetector(
+         onTap: () => context.push("/movie/${ movie.id }"),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20), //Borde redondeado para imagen
+            child: Image.network(
+              movie.backdropPath,
+              fit: BoxFit.cover, //Toma el espacio del contenedor 
+              //Nos ayuda a saber si una imagen ya se construyó o no
+              loadingBuilder: (context, child, loadingProgress){
+                if( loadingProgress != null ){ //Si se está cargando la imagen, entonces...
+                  return const DecoratedBox(
+                    decoration: BoxDecoration( color: Colors.black12 )
+                  );
+                }
+          
+                //Si ya no está recargando la imagen, entonces se retorna el child
+                return FadeIn(child: child);
+          
               }
-
-              //Si ya no está recargando la imagen, entonces se retorna el child
-              return FadeIn(child: child);
-
-            }
+            ),
           ),
         )
       ),
