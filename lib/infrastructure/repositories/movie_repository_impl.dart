@@ -34,7 +34,9 @@ class MovieRepositoryImpl extends MoviesRepository{
   Future<List<Movie>> getTopRated({int page = 1}) {
     return datasource.getTopRated(page: page);
   }
+
   
+
   @override
   Future<Movie> getMovieById(String id) async{
     return datasource.getMovieById(id);
@@ -44,5 +46,9 @@ class MovieRepositoryImpl extends MoviesRepository{
   Future<List<Movie>> searchMovies(String query) {
     return datasource.searchMovies(query);
   }
+  
+  
+  
+  
 
 }

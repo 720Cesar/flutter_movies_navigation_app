@@ -1,5 +1,4 @@
 // El statefulWidget pasa a ser ConsumerStatefulWidget
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +25,7 @@ class HomeViewState extends ConsumerState<HomeView> {
     ref.read( popularMoviesProvider.notifier ).loadNextPage();
     ref.read( upcomingMoviesProvider.notifier ).loadNextPage();
     ref.read( topRatedMoviesProvider.notifier).loadNextPage();
-    
+
   }
 
   @override
@@ -44,6 +43,7 @@ class HomeViewState extends ConsumerState<HomeView> {
     final popularMovies = ref.watch( popularMoviesProvider );
     final upcomingMovies = ref.watch( upcomingMoviesProvider );
     final topRatedMovies = ref.watch( topRatedMoviesProvider );
+    
 
 
     //SingleChildScrollView() es un widget que permite hacer Scroll al widget hijo (Column())

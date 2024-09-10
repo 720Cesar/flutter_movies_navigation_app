@@ -1,13 +1,13 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
-import 'package:cinemapedia/presentation/providers/actors/actors_by_movie_provider.dart';
 import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:read_more_text/read_more_text.dart';
 import 'package:animated_read_more_text/animated_read_more_text.dart';
+import '../../providers/providers.dart';
+
 
 
 
@@ -72,14 +72,14 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
   }
 }
 
-class _MovieDetails extends StatelessWidget {
+class _MovieDetails extends ConsumerWidget {
 
   final Movie movie;
 
   const _MovieDetails({ required this.movie });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     final size = MediaQuery.of(context).size;
     final textStyles = Theme.of(context).textTheme;
@@ -190,13 +190,16 @@ class _MovieDetails extends StatelessWidget {
                     ),),
                   ),
 
-                    
                   ],
                 ),
               ],
             ),
           ),
         ),
+        
+
+        //* PELICULAS SIMILARES
+         
 
       ],
     );
@@ -279,24 +282,71 @@ class _ActorsByMovie extends ConsumerWidget {
   }
 }
 
-class _CustomSliverAppBar extends StatelessWidget {
+// Otro tipo de Provider de Riverpod
+// Sirve para cuando se tiene un tipo de tarea asíncrona, una vez que se resuelve la tarea,
+// entonces se obtiene el valor
+// family() permite mandar otro argumento, porque se necesita el ID de la película en la BD
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId){
+  
+  final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+
+  //Devuelve un valor booleano a isMovieFavorite para saber si está el ID de la peli
+  return localStorageRepository.isMovieFavorite(movieId); //Si está en favoritos
+});
+
+//* Define el StateNotifierProvider.family para gestionar el estado de favoritos
+// final isFavoriteProvider = StateNotifierProvider.family.autoDispose<FavoriteNotifier, bool, int>((ref, movieId){
+//   final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+//   return FavoriteNotifier(localStorageRepository, movieId);
+// });
+
+//* Widget personalizado que muestra una barra superior con una imagen de fondo
+class _CustomSliverAppBar extends ConsumerWidget {
 
   final Movie movie;
 
-  const _CustomSliverAppBar({
+  const _CustomSliverAppBar({ 
     required this.movie,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     //Se obtienen las dimensiones del dispositivo físico
     final size = MediaQuery.of(context).size;
+
+    //Instancia al provider para el cambio del icono
+    final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
 
     return SliverAppBar(
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.24,
       foregroundColor: Colors.white,
+      actions: [
+        
+        //* FORMA DE USAR UN FUTURE PROVIDER
+        IconButton(onPressed: () async {
+
+          //Llama al provider provider para poder insertar el ID de la nueva película en favoritos
+          //ref.read(localStorageRepositoryProvider).toggleFavorite(movie);
+          //Se necesita primero insertar a la BD antes de invalidar el estado
+          await ref.read(favoritesMoviesProvider.notifier).toggleFavorite(movie);
+
+          //Invalida el estado del provider y lo regresa a su estado original
+          ref.invalidate(isFavoriteProvider(movie.id));
+
+        },
+          icon: isFavoriteFuture.when(
+            data: (isFavorite) => isFavorite 
+            ? const Icon(Icons.favorite_rounded, color: Colors.red,) //Si está en favoritos, se muestra el icono rojo
+            : const Icon(Icons.favorite_border), 
+            error: (_, __) => throw  UnimplementedError(), 
+            loading: () => const CircularProgressIndicator(strokeWidth: 2,) //Mientras realiza la consulta
+          ),
+        ),
+
+
+      ],
       //title: Text(movie.title),
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -322,36 +372,26 @@ class _CustomSliverAppBar extends StatelessWidget {
             ),
 
             //* GRADIENTE
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.5,1.0],
-                    colors: [
-                      Colors.transparent,
-                      Colors.black87,
-                    ]
-                  ),
-                ),
-              ),
+
+            const _CustomGradient(
+              begin: Alignment.topCenter, 
+              stops: [0.5,1.0], 
+              colors: [Colors.transparent, Colors.black87]
             ),
 
-            const SizedBox.expand(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    stops: [0.0,0.4],
-                    colors: [
-                      Colors.black87,
-                      Colors.transparent,
-                    ]
-                  ),
-                ),
-              ),
+            const _CustomGradient(
+              begin: Alignment.topRight, 
+              end: Alignment.bottomLeft,
+              stops: [0.0,0.2], 
+              colors: [Colors.black54, Colors.transparent]
             ),
+
+            const _CustomGradient(
+              begin: Alignment.topLeft, 
+              stops: [0.0,0.4], 
+              colors: [Colors.black87, Colors.transparent]
+            ),
+
 
           ],
         ),
@@ -360,5 +400,40 @@ class _CustomSliverAppBar extends StatelessWidget {
 
 
     );
+  }
+}
+
+class _CustomGradient extends StatelessWidget {
+  
+  //begin
+  //end
+  //stops
+  //colors
+  
+  final AlignmentGeometry begin;
+  final AlignmentGeometry? end;
+  final List<double> stops;
+  final List<Color> colors;
+
+  const _CustomGradient({
+    required this.begin, 
+    this.end, 
+    required this.stops, 
+    required this.colors
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: begin,
+                  stops: stops,
+                  colors: colors
+                ),
+              ),
+            ),
+          );
   }
 }

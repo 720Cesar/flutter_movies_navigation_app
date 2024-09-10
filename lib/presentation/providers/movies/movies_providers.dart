@@ -41,8 +41,47 @@ final topRatedMoviesProvider = StateNotifierProvider<MoviesNotifier, List<Movie>
   );
 });
 
+
+
 // Se define el tipo de callback que se espera
 typedef MovieCallback = Future<List<Movie>> Function({ int page });
+
+typedef MovieCallback2 = Future<List<Movie>> Function({required String id, int page});
+
+
+class MoviesNotifier2 extends StateNotifier<List<Movie>> {
+
+  int currentPage = 0;
+  String movieId;
+  bool isLoading = false;
+  MovieCallback2 fetchMoreMovies;
+
+  MoviesNotifier2({
+    required this.fetchMoreMovies,
+    required this.movieId
+  }): super([]);
+
+  // Su objetivo es hacer una modificación al State
+  Future<void> loadNextPage() async{
+    if( isLoading ) return;
+
+    isLoading = true; //Impide que haya más de una petición de nuevas peliculas
+    currentPage++;
+    final List<Movie> movies = await fetchMoreMovies( id: movieId, page: currentPage );
+    // Regresa el estado actual y el listado de las películas que encuentra
+    state = [...state, ...movies];
+    //Atrasa que la bandera pase a false
+    await Future.delayed(const Duration(milliseconds: 300));
+    isLoading = false;
+
+  }
+
+}
+
+
+
+
+
 
 //Provider que controlará toda la información en el estado
 class MoviesNotifier extends StateNotifier<List<Movie>> {
