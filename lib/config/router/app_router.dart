@@ -1,20 +1,36 @@
 
 
 import 'package:cinemapedia/presentation/screens/screens.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
-  initialLocation: "/home/0",
+  initialLocation: "/splash",
   routes: [
     GoRoute(
+      
       path: "/home/:page",
       name: HomeScreen.name,
-      builder: (context, state) {
-        //Se obtiene el valor de "page" y 
-        final pageIndex = (state.pathParameters['page' ?? 0]).toString(); //En caso de no haber "page", se manda 0
+      pageBuilder: (context, state) {
 
-        return HomeScreen( pageIndex: int.parse(pageIndex) ,); //Se hace el parseo a int
+        final pageIndex = (state.pathParameters['page' ?? 0]).toString();
+
+        return CustomTransitionPage(
+          transitionDuration: const Duration(seconds: 2),
+          key: state.pageKey,
+          child:  HomeScreen(pageIndex: int.parse(pageIndex),), 
+          transitionsBuilder: (context, animation, secondaryAnimation, child){
+            return FadeTransition(
+              opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+              child: child,
+            );
+          }
+        );
       },
+      
+
+      //TODO: Agregar animación después del Splash aquí. 
+      
       //Se conoce como rutas hijas
       //Colocar las otras pantallas como rutas hijas permite el Deep-Linking en la aplicación
       routes: [
@@ -30,9 +46,28 @@ final appRouter = GoRouter(
 
             return MovieScreen(movieId: movieId);
           },
+          
         ),
 
       ]
+    ),
+
+    GoRoute(
+      path: "/splash",
+      name: SplashScreen.name,
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          transitionDuration: const Duration(seconds: 3),
+          key: state.pageKey,
+          child: const SplashScreen(), 
+          transitionsBuilder: (context, animation, secondaryAnimation, child){
+            return FadeTransition(
+              opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+              child: child,
+            );
+          }
+        );
+      }
     ),
 
     //Se establece que la ruta "/" siempre redirija a la ruta "/home/0/movie"

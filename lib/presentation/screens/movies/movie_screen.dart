@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
-import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -375,8 +374,8 @@ class _CustomSliverAppBar extends ConsumerWidget {
 
             const _CustomGradient(
               begin: Alignment.topCenter, 
-              stops: [0.5,1.0], 
-              colors: [Colors.transparent, Colors.black87]
+              stops: [0.7,1.0], 
+              colors: [Colors.transparent, Colors.black54]
             ),
 
             const _CustomGradient(
@@ -390,6 +389,12 @@ class _CustomSliverAppBar extends ConsumerWidget {
               begin: Alignment.topLeft, 
               stops: [0.0,0.4], 
               colors: [Colors.black87, Colors.transparent]
+            ),
+
+            const _CustomGradient(
+              begin: Alignment.bottomRight,
+              stops: [0.05,0.8], 
+              colors: [Colors.black, Colors.transparent]
             ),
 
 
