@@ -3,7 +3,6 @@
 
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/delegates/search_movie_delegate.dart';
-import 'package:cinemapedia/presentation/providers/movies/movies_repository_provider.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,14 +21,14 @@ class CustomAppbar extends ConsumerWidget {
     return SafeArea(
       bottom: false, //Elimina el espacio de abajo del SafeArea
       child: Padding(
-        padding: EdgeInsets.symmetric( horizontal: 10 ),
+        padding: const EdgeInsets.symmetric( horizontal: 10 ),
         child: SizedBox(
           width: double.infinity,
           child: Row(
             children: [
-              Icon( Icons.movie_outlined, color: colors.primary, ),
+              Icon( Icons.star_outline_sharp, color: colors.primary, ),
               const SizedBox( width: 5,),
-              Text("CinemaPedia", style: titleStyle,),
+              const Text("CinemaSpot", style: TextStyle( fontFamily: "Bukhari", fontSize: 20),),
               
               //Spacer es un widget que toma todo un espacio disponible
               //En este caso ayuda a mover el texto del título y el ícono de búsqueda

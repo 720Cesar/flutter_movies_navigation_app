@@ -34,20 +34,22 @@ class MovieMovideDB {
     factory MovieMovideDB.fromJson(Map<String, dynamic> json) => MovieMovideDB(
         adult: json["adult"] ?? false,
         backdropPath: json["backdrop_path"] ?? "",
-        genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
+        genreIds: json["genre_ids"] != null
+          ? List<int>.from(json["genre_ids"].map((x) => x))
+          : <int>[],
         id: json["id"],
         originalLanguage: json["original_language"], //Se cambia a String para obtener solo el valor
         originalTitle: json["original_title"],
         overview: json["overview"] ?? "",
-        popularity: json["popularity"]?.toDouble(),
+        popularity: json["popularity"]?.toDouble() ?? 0.0,
         posterPath: json["poster_path"] ?? "",
         releaseDate: json["release_date"]  != null && json["release_date"].toString().isNotEmpty //Si hay datos, los envía. Si no hay datos manda nulo
           ? DateTime.parse(json["release_date"])
           : null,
         title: json["title"],
-        video: json["video"],
-        voteAverage: json["vote_average"]?.toDouble(),
-        voteCount: json["vote_count"],
+        video: json["video"] ?? false,
+        voteAverage: json["vote_average"]?.toDouble() ?? 0.0,
+        voteCount: json["vote_count"] ?? 0,
     );
 
     Map<String, dynamic> toJson() => {

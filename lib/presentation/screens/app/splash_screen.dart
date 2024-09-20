@@ -18,7 +18,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
+    //Permite que se abarque la totalidad de la pantalla
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    
+    //Permite una duración de 2 segundos para que inicie la pantalla principal
     Future.delayed(Duration(seconds: 2), () {
       context.go("/home/0");
     });
@@ -26,6 +29,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   void dispose() {
+    //Se elimina la pantalla completa después del Splash
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
