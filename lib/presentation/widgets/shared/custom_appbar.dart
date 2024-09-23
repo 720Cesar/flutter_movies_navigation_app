@@ -15,8 +15,7 @@ class CustomAppbar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     
     final colors = Theme.of(context).colorScheme;
-    final titleStyle = Theme.of(context).textTheme.titleMedium;
-    
+        
     // Se asigna un área segura por si hay algún obstaculo para renderizar el widget
     return SafeArea(
       bottom: false, //Elimina el espacio de abajo del SafeArea

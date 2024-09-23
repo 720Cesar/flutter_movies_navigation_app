@@ -83,6 +83,14 @@ class MovieDbDatasource extends MoviesDatasource{
     return _jsonToMovies(response.data);
 
   }
+
+  @override
+  Future<List<Movie>> getSimilar(int movieId) async{
+    final response = await dio.get('/movie/$movieId/similar');
+
+    return _jsonToMovies(response.data);
+
+  }
    
   
   @override
@@ -110,6 +118,8 @@ class MovieDbDatasource extends MoviesDatasource{
     if(query.isEmpty) return [];
       return _jsonToMovies(response.data);
   }
+  
+  
   
   
   

@@ -82,120 +82,22 @@ class _MovieDetails extends ConsumerWidget {
 
     final size = MediaQuery.of(context).size;
     final textStyles = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  movie.posterPath,
-                  width: size.width * 0.3,
-                ),
-              ),
-
-              const SizedBox( width: 10,),
-
-              //* DESCRIPCIÓN DE LA PELÍCULA
-              SizedBox(
-                width: (size.width - 40) * 0.7,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Descripción", style: textStyles.titleLarge,),
-                    
-
-                    AnimatedReadMoreText(
-                    movie.overview,
-                     maxLines: 8,
-                      readMoreText: "+",
-                      readLessText: "-",
-                      buttonTextStyle: TextStyle(
-                        color: colors.primary,
-                        fontWeight: FontWeight.bold,
-                        
-                      ),
-                    ),
-                    
-                  ],
-                ),
-              ),
-
-            ],
-          ),
-        ),
-
-        //* GÉNERO DE LA PELÍCULA
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: Wrap( //Widget que muestra un texto con un fondo
-            children: [
-              ...movie.genreIds.map((gender) => Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: Chip(
-                  label: Text( gender, style: TextStyle(color: colors.inversePrimary), ),
-                  shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: colors.primary,
-                ),
-              ))
-            ],
-          ),
-        ),
+        //Póster, titulo y descripción
+        _PosterAndOverview(movie: movie, size: size, textStyles: textStyles),
+        
+        //GÉNERO DE LA PELÍCULA
+        _MovieGenre(movie: movie),
         
         //EL ID QUE SE OBTIENE ES UN STRING, POR LO QUE SE DEBE MANDAR EL VALOR COMO TAL
         _ActorsByMovie(movieId: movie.id.toString()),
 
-        //* CALIFICACIÓN DE LA PELÍCULA
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            width: size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Calificación general", style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.yellow.shade900
-                  ),),
-                Row(
-                  
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-
-                  SizedBox( 
-                    width: size.width * 0.2,
-                    child: 
-                    Lottie.asset("assets/animations/star_rating_animation.json", animate: true, repeat: true),
-                  ),
-
-                  Text(HumanFormats.number(movie.voteAverage,1), style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: size.width * 0.1,
-                    color: Colors.yellow.shade900
-                  ),),
-
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(start: 50),
-                    child: Text("*Basado en ${movie.voteCount} votos", style: TextStyle(
-                      fontSize: 12,
-                    ),),
-                  ),
-
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        
+        // CALIFICACIÓN DE LA PELÍCULA
+        _MovieCalification(movie: movie)
 
         //* PELICULAS SIMILARES
          
@@ -206,6 +108,113 @@ class _MovieDetails extends ConsumerWidget {
 }
 
 
+// Otro tipo de Provider de Riverpod
+// Sirve para cuando se tiene un tipo de tarea asíncrona, una vez que se resuelve la tarea,
+// entonces se obtiene el valor
+// family() permite mandar otro argumento, porque se necesita el ID de la película en la BD
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId){
+  
+  final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+
+  //Devuelve un valor booleano a isMovieFavorite para saber si está el ID de la peli
+  return localStorageRepository.isMovieFavorite(movieId); //Si está en favoritos
+});
+
+//* PÓSTER Y DESCRIPCIÓN
+class _PosterAndOverview extends StatelessWidget {
+
+  final Movie movie;
+  final Size size;
+  final TextTheme textStyles;
+
+  const _PosterAndOverview({
+    required this.movie,
+    required this.size,
+    required this.textStyles, 
+  });
+
+  @override
+  Widget build(BuildContext context) {  
+    
+    final colors = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+              movie.posterPath,
+              width: size.width * 0.3,
+            ),
+          ),
+
+          const SizedBox( width: 10,),
+
+          //* DESCRIPCIÓN DE LA PELÍCULA
+          SizedBox(
+            width: (size.width - 40) * 0.7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Descripción", style: textStyles.titleLarge,),
+                
+
+                AnimatedReadMoreText(
+                movie.overview,
+                  maxLines: 8,
+                  readMoreText: "+",
+                  readLessText: "-",
+                  buttonTextStyle: TextStyle(
+                    color: colors.primary,
+                    fontWeight: FontWeight.bold,
+                    
+                  ),
+                ),
+                
+              ],
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+
+//* GÉNERO DE LA PELÍCULA
+class _MovieGenre extends StatelessWidget {
+
+  final Movie movie;
+
+  const _MovieGenre({ required this.movie });
+
+  @override
+  Widget build(BuildContext context) {    
+
+    final colors = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Wrap( //Widget que muestra un texto con un fondo
+        children: [
+          ...movie.genreIds.map((gender) => Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: Chip(
+              label: Text( gender, style: TextStyle(color: colors.inversePrimary), ),
+              shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(20)),
+              backgroundColor: colors.primary,
+            ),
+          ))
+        ],
+      ),
+    );
+  }
+}
+
+//* ACTORES DE LA PELÍCULA
 class _ActorsByMovie extends ConsumerWidget {
   
   final String movieId;
@@ -260,14 +269,14 @@ class _ActorsByMovie extends ConsumerWidget {
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   //"TextOverflow" permite mostrar "..." si el texto sobresale
-                  style: TextStyle( fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis ),
+                  style: const TextStyle( fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis ),
 
                 ),
                 //Si no hay personaje, no se muestra nada
                 Text(actor.character ?? "", 
                   maxLines: 2,
                   textAlign: TextAlign.center,
-                  style: TextStyle( fontSize: 11, overflow: TextOverflow.ellipsis),
+                  style: const TextStyle( fontSize: 11, overflow: TextOverflow.ellipsis),
                 ),
 
 
@@ -281,23 +290,62 @@ class _ActorsByMovie extends ConsumerWidget {
   }
 }
 
-// Otro tipo de Provider de Riverpod
-// Sirve para cuando se tiene un tipo de tarea asíncrona, una vez que se resuelve la tarea,
-// entonces se obtiene el valor
-// family() permite mandar otro argumento, porque se necesita el ID de la película en la BD
-final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId){
-  
-  final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+//* CALIFICACIÓN DE LA PELÍCULA
+class _MovieCalification extends StatelessWidget {
 
-  //Devuelve un valor booleano a isMovieFavorite para saber si está el ID de la peli
-  return localStorageRepository.isMovieFavorite(movieId); //Si está en favoritos
-});
+  final Movie movie;
 
-//* Define el StateNotifierProvider.family para gestionar el estado de favoritos
-// final isFavoriteProvider = StateNotifierProvider.family.autoDispose<FavoriteNotifier, bool, int>((ref, movieId){
-//   final localStorageRepository = ref.watch(localStorageRepositoryProvider);
-//   return FavoriteNotifier(localStorageRepository, movieId);
-// });
+  const _MovieCalification({super.key, required this.movie});
+
+  @override
+  Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size;
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Calificación general", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.yellow.shade900
+              ),),
+            Row(
+              
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+
+              SizedBox( 
+                width: size.width * 0.2,
+                child: 
+                Lottie.asset("assets/animations/star_rating_animation.json", animate: true, repeat: true),
+              ),
+
+              Text(HumanFormats.number(movie.voteAverage,1), style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: size.width * 0.1,
+                color: Colors.yellow.shade900
+              ),),
+
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 50),
+                child: Text("*Basado en ${movie.voteCount} votos", style: const TextStyle(
+                  fontSize: 12,
+                ),),
+              ),
+
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 //* Widget personalizado que muestra una barra superior con una imagen de fondo
 class _CustomSliverAppBar extends ConsumerWidget {
@@ -408,12 +456,8 @@ class _CustomSliverAppBar extends ConsumerWidget {
   }
 }
 
+//* Widget para el gradiente de las imágenes
 class _CustomGradient extends StatelessWidget {
-  
-  //begin
-  //end
-  //stops
-  //colors
   
   final AlignmentGeometry begin;
   final AlignmentGeometry? end;

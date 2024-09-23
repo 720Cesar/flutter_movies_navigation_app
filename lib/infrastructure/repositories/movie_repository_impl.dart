@@ -35,7 +35,10 @@ class MovieRepositoryImpl extends MoviesRepository{
     return datasource.getTopRated(page: page);
   }
 
-  
+  @override
+  Future<List<Movie>> getSimilar(int movieId) {
+    return datasource.getSimilar(movieId);
+  } 
 
   @override
   Future<Movie> getMovieById(String id) async{
@@ -46,6 +49,8 @@ class MovieRepositoryImpl extends MoviesRepository{
   Future<List<Movie>> searchMovies(String query) {
     return datasource.searchMovies(query);
   }
+  
+ 
   
   
   
