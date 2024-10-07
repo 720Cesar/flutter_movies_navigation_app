@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/presentation/widgets/movies/similar_movies.dart';
+import 'package:cinemapedia/presentation/widgets/videos/videos_from_movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -82,6 +84,7 @@ class _MovieDetails extends ConsumerWidget {
 
     final size = MediaQuery.of(context).size;
     final textStyles = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,14 +99,26 @@ class _MovieDetails extends ConsumerWidget {
         //EL ID QUE SE OBTIENE ES UN STRING, POR LO QUE SE DEBE MANDAR EL VALOR COMO TAL
         _ActorsByMovie(movieId: movie.id.toString()),
 
+        const Divider( height: 20, indent: 10, endIndent: 10,),
+
         // CALIFICACIÓN DE LA PELÍCULA
-        _MovieCalification(movie: movie)
+        _MovieCalification(movie: movie),
+        
+        //const SizedBox(height: 15,),
+        const Divider( height: 20, indent: 10, endIndent: 10,),
+
+        //* VIDEOS DE PELICULAS
+         VideosFromMovie(movieId: movie.id), 
+        
 
         //* PELICULAS SIMILARES
+         SimilarMovies(movieId: movie.id),
+
          
 
       ],
     );
+
   }
 }
 
@@ -310,7 +325,6 @@ class _MovieCalification extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Calificación general", style: TextStyle(
-                fontWeight: FontWeight.bold,
                 fontSize: 20,
                 color: Colors.yellow.shade900
               ),),

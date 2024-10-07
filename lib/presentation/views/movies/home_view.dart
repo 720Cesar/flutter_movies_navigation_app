@@ -1,4 +1,5 @@
 // El statefulWidget pasa a ser ConsumerStatefulWidget
+import 'package:cinemapedia/config/helpers/spanish_dates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -72,7 +73,7 @@ class HomeViewState extends ConsumerState<HomeView> {
                 MovieHorizontalListview(
                   movies: nowPlayingMovies,
                   title: "En cines",
-                  subTitle: "Junio",
+                  subTitle: SpanishDates.monthES(DateTime.now().month),
                   loadNextPage: (){
                     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
                   }

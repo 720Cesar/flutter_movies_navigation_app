@@ -120,7 +120,6 @@ class _Title extends StatelessWidget {
               onPressed: (){},
               child: Text(subTitle!)
             )
-
         ],
       ),
     );
@@ -152,6 +151,7 @@ class _Slide extends StatelessWidget {
                 movie.posterPath,
                 fit: BoxFit.cover,
                 width: 150,
+                height: 220,
                 loadingBuilder: (context, child, loadingProgress){
                   
                   if(loadingProgress != null){

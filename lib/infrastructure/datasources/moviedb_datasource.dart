@@ -1,9 +1,12 @@
 import 'package:cinemapedia/config/constants/environment.dart';
 import 'package:cinemapedia/domain/datasources/movies_datasource.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/video.dart';
 import 'package:cinemapedia/infrastructure/mapppers/movie_mapper.dart';
+import 'package:cinemapedia/infrastructure/mapppers/video_mapper.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/movie_details.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_videos.dart';
 import 'package:dio/dio.dart';
 
 //EN ESTE ARCHIVO SE ENCUENTRA TODA LA LÓGICA PARA REALIZAR PETICIONES HTTP A LA API
@@ -117,6 +120,26 @@ class MovieDbDatasource extends MoviesDatasource{
 
     if(query.isEmpty) return [];
       return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Video>> getYoutubeVideosById(int movieId) async{
+    final response = await dio.get('/movie/$movieId/videos');
+    final moviedbVideosResponse = MoviedbVideosResponse.fromJson(response.data);
+    final videos = <Video>[];
+
+    //Se hace un recorrido en los resultados de los detalles de la película
+    for(final moviedbVideo in moviedbVideosResponse.results){
+      //Se evalua que el video se encuentre únicamente en YT
+      if(moviedbVideo.site == 'YouTube'){
+        //Se crea una lista tipo Video que permita obtener los datos del Video
+        final video = VideoMapper.moviedbVideoToEntity(moviedbVideo);
+        videos.add(video);
+      }
+    }
+
+    return videos;
+
   }
   
   
