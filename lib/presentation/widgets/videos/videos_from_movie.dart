@@ -56,7 +56,6 @@ class _VideosList extends StatelessWidget {
 
         const Divider( height: 20, indent: 10, endIndent: 10,),
 
-
       ],
     );
   }
@@ -115,7 +114,10 @@ class _VideoPlayerState extends State<_YoutubeVideoPlayer>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(widget.name),
-          YoutubePlayer(controller: _controller)
+          YoutubePlayer(
+            controller: _controller,
+          
+          )
         ],
       ),
     );

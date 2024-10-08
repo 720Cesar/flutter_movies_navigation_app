@@ -248,6 +248,10 @@ class _ActorsByMovie extends ConsumerWidget {
 
     final actors = actorsByMovie[movieId]!;
 
+    if (actors.isEmpty){
+      return const SizedBox();
+    }
+
     //* DISEÑO DE CAJAS PARA LOS ACTORES
     return SizedBox(
       height: 280,
