@@ -86,14 +86,6 @@ class HomeViewState extends ConsumerState<HomeView> {
                   }
                 ),
                 MovieHorizontalListview(
-                  movies: popularMovies,
-                  title: "Populares",
-                  //subTitle: "",
-                  loadNextPage: (){
-                    ref.read(popularMoviesProvider.notifier).loadNextPage();
-                  }
-                ),
-                MovieHorizontalListview(
                   movies: topRatedMovies,
                   title: "Mejor calificadas",
                   subTitle: "Desde siempre",

@@ -65,9 +65,9 @@ class FavoritesViewState extends ConsumerState<FavoritesView>{
             
             Icon(Icons.favorite_outline_sharp, size: 60, color: colors.primary,),
             Text("Está muy vacío por aquí...", style: TextStyle( fontSize: 20, color: colors.primary),),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text("Parece que no has agregado películas favoritas \n¿Por qué no empezar ahora?", style: TextStyle( fontSize: 12, color: Colors.white54 ), textAlign: TextAlign.center,),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Parece que no has agregado películas favoritas \n¿Por qué no empezar ahora?", style: TextStyle( fontSize: 12, color: Colors.white54 ), textAlign: TextAlign.center,),
             ),
 
             const SizedBox(height: 20,),

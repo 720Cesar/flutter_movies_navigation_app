@@ -33,12 +33,12 @@ class CustomBottomNavigation extends StatelessWidget {
       //Ocupa minimo dos hijos
       items: const [
         BottomNavigationBarItem(
-          icon: Icon( Icons.home_max ),
+          icon: Icon( Icons.home_outlined ),
           label: "Inicio"
         ),
         BottomNavigationBarItem(
-          icon: Icon( Icons.label_outline ),
-          label: "Categorías"
+          icon: Icon( Icons.thumb_up_off_alt_outlined ),
+          label: "Populares"
         ),
         BottomNavigationBarItem(
           icon: Icon( Icons.favorite_outline ),
