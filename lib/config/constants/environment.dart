@@ -1,5 +1,5 @@
 
-// ARCHIVO QUE GUARDA VARIABLES CONSTANTES
+// ARCHIVO QUE GUARDA VARIABLES CONSTANTES USADAS EN TODA LA APP
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

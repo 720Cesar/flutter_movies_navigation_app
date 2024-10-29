@@ -1,4 +1,7 @@
 
+/** ARCHIVO QUE PERMITE OBTENER UN NÚMERO DE FECHA 
+ * Y TRADUCIRLO AL ESPAÑOL
+ */
 
 class SpanishDates {
 

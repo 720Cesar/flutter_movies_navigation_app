@@ -27,10 +27,7 @@ final appRouter = GoRouter(
           }
         );
       },
-      
-
-      //TODO: Agregar animación después del Splash aquí. 
-      
+            
       //Se conoce como rutas hijas
       //Colocar las otras pantallas como rutas hijas permite el Deep-Linking en la aplicación
       routes: [
